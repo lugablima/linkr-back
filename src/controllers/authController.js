@@ -1,5 +1,7 @@
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-import authRepository from "../repositories/authRepository";
+import authRepository from "../repositories/authRepository.js";
 import sessionsRepository from "../repositories/sessionsRepository.js";
 
 export async function createUser(req, res) {
@@ -8,7 +10,7 @@ export async function createUser(req, res) {
   try {
     const emailRegistered = authRepository.getUserByEmail(email);
 
-    if (emailRegistered.rows.length > 0) {
+    if (emailRegistered.rowsCount > 0) {
       return res.status(409).send("Email already registered");
     }
 
@@ -16,31 +18,29 @@ export async function createUser(req, res) {
     res.sendStatus(201);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(500);
+    return res.status(500).send("Server crashed while trying to create user", error);
   }
 }
 
 export async function login(req, res) {
+  const { email, password } = req.body;
+  const { rows: users } = await authRepository.getUserByEmail(email);
 
-    const { email, password }  = req.body;
-    const { rows: users } = await usersRepository.getUserByEmail(email);
+  const [user] = users;
 
-    const [user] = users;
+  if (!user) return res.status(401).send("unauthorized");
 
-    if (!user) return res.status(401).send("unauthorized");
+  if (bcrypt.compareSync(password, users.password)) {
+    const data = {
+      id: users.id,
+      name: users.name,
+    };
+    const secretKey = process.env.JWT_SECRET;
+    const token = jwt.sign(data, secretKey);
 
-    if (bcrypt.compareSync(password, users.password)) {
-        const data = {
-            id: users.id,
-            name: users.name
-        }
-        const secretKey = process.env.JWT_SECRET;
-        const token = jwt.sign(data, secretKey);
+    await sessionsRepository.createSession(token, user.id);
+    return res.send(token);
+  }
 
-        await sessionsRepository.createSession(token, user.id);
-        return res.send(token);
-
-    }
-
-    return res.status(401);
+  return res.status(401);
 }
