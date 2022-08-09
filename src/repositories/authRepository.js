@@ -1,21 +1,23 @@
 import bcrypt from "bcrypt";
+
+
 import db from "../db/postgres.js";
 
 async function getUserByEmail(email) {
-    return db.query("SELECT email FROM users WHERE email = $1", [email])
+  return db.query(`SELECT * FROM users WHERE email = $1`, [email]);
 }
- async function createUser(name, email, password) {
-    const SALT = process.env.SALT
-    const passwordHash = bcrypt.hashSync(password, SALT);
 
-    return db.query(`INSERT INTO users (name, email, password) 
-    VALUES ($1, $2, $3)`,
-    [name, email, passwordHash])
- }
+async function createUser(email, password, username, pictureURL) {
+  const SALT = process.env.SALT;
+  const passwordHash = bcrypt.hashSync(password, SALT);
 
- const usersRepository = {
-    getUserByEmail,
-    createUser
- }
+  return db.query(`INSERT INTO users (email, password, username, pictureURL) VALUES ($1, $2, $3, $4)`, [
+    (email, passwordHash, username, pictureURL),
+  ]);
+}
 
- export default usersRepository;
+const authRepository = { getUserByEmail, createUser };
+
+export default authRepository;
+
+
