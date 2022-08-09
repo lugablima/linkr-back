@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 
+
 import db from "../db/postgres.js";
 
 async function getUserByEmail(email) {
@@ -7,7 +8,7 @@ async function getUserByEmail(email) {
 }
 
 async function createUser(email, password, username, pictureURL) {
-  const SALT = 10;
+  const SALT = process.env.SALT;
   const passwordHash = bcrypt.hashSync(password, SALT);
 
   return db.query(`INSERT INTO users (email, password, username, pictureURL) VALUES ($1, $2, $3, $4)`, [
@@ -18,3 +19,5 @@ async function createUser(email, password, username, pictureURL) {
 const authRepository = { getUserByEmail, createUser };
 
 export default authRepository;
+
+
