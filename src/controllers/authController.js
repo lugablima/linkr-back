@@ -1,21 +1,27 @@
 
-import authRepository from "../repositories/authRepository";
+import authRepository from "../repositories/authRepository.js";
 import sessionsRepository from "../repositories/sessionsRepository.js";
 
 export async function createUser(req, res) {
   const { email, password, username, pictureURL } = req.body;
 
   try {
-    const emailRegistered = authRepository.getUserByEmail(email);
-
-    if (emailRegistered.rows.length > 0) {
+    const { rowCount:users }   = await authRepository.getUserByEmail(email);
+    console.log(users)
+    if ( users  ) {
       return res.status(409).send("Email already registered");
+    }
+
+    const { rowCount: user } = await authRepository.getUserByUsername(username);
+    console.log(user)
+    if ( user ) {
+      return res.status(409).send("Username already registered");
     }
 
     await authRepository.createUser(email, password, username, pictureURL);
     res.sendStatus(201);
   } catch (error) {
-    console.log(error);
+    console.log(error + "same errors");
     return res.sendStatus(500);
   }
 }
@@ -23,8 +29,8 @@ export async function createUser(req, res) {
 export async function login(req, res) {
 
     const { email, password }  = req.body;
-    const { rows: users } = await usersRepository.getUserByEmail(email);
-
+    const { rows: users } = await authRepository.getUserByEmail(email);
+    
     const [user] = users;
 
     if (!user) return res.status(401).send("unauthorized");

@@ -4,3 +4,4 @@ node_modules/
 .wakatime-project
 .prettier*
 .eslint*
+database/

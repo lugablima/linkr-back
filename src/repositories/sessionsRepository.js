@@ -1,4 +1,4 @@
-import db from "../config/db.js";
+import db from "../db/postgres.js";
 
 async function createSession(token, userId) {
   return db.query(`
