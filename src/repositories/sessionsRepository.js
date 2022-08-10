@@ -1,10 +1,10 @@
 import db from "../db/postgres.js";
 
-async function createSession(token, userId) {
+async function createSession(userId) {
   return db.query(
     `
-   INSERT INTO sessions (token, "userId") VALUES ($1, $2)`,
-    [token, userId]
+   INSERT INTO sessions ("userId") VALUES ($1)`,
+    [userId]
   );
 }
 

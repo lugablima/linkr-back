@@ -9,13 +9,13 @@ export async function createUser(req, res) {
 
   try {
     const { rowCount:users }   = await authRepository.getUserByEmail(email);
-    console.log(users)
+   
     if ( users  ) {
       return res.status(409).send("Email already registered");
     }
 
     const { rowCount: user } = await authRepository.getUserByUsername(username);
-    console.log(user)
+ 
     if ( user ) {
       return res.status(409).send("Username already registered");
     }
@@ -39,15 +39,18 @@ export async function login(req, res) {
 
   if (!user) return res.status(401).send("unauthorized");
 
-  if (bcrypt.compareSync(password, users.password)) {
+  if (bcrypt.compareSync(password, user.password)) {
+
     const data = {
       id: users.id,
       name: users.name,
     };
+
     const secretKey = process.env.JWT_SECRET;
     const token = jwt.sign(data, secretKey);
 
-    await sessionsRepository.createSession(token, user.id);
+
+    await sessionsRepository.createSession(user.id);
     return res.send(token);
   }
 
