@@ -1,8 +1,11 @@
 import db from "../db/postgres.js";
 
 async function createSession(token, userId) {
-  return db.query(`
-   INSERT INTO sessions (token, "userId") VALUES ($1, $2)`, [token, userId]);
+  return db.query(
+    `
+   INSERT INTO sessions (token, "userId") VALUES ($1, $2)`,
+    [token, userId]
+  );
 }
 
 async function getSessionByToken(token) {
@@ -11,7 +14,7 @@ async function getSessionByToken(token) {
 
 const sessionsRepository = {
   createSession,
-  getSessionByToken
-}
+  getSessionByToken,
+};
 
 export default sessionsRepository;
