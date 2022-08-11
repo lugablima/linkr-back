@@ -19,6 +19,10 @@ export async function createPost(req, res) {
   description = description.trim();
 
   // Falta fazer a sanitização do description com a lib string-strip-html
+  // Falta também identificar se a description possui uma hashtag ou mais de uma
+  // Se tiver, precisa verificar se cada hashtag já existe no banco de dados
+  // Se existir, precisa somar um na contagem de usos da hashtag e associar ela ao id do post
+  // Se não existir, precisa criar a hashtag no banco e associar ela ao id do post
 
   if (!description) description = null;
 
