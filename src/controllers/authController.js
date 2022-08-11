@@ -42,8 +42,8 @@ export async function login(req, res) {
   if (bcrypt.compareSync(password, user.password)) {
 
     const data = {
-      id: users.id,
-      name: users.name,
+      id: user.id,
+      name: user.name,
     };
 
     const secretKey = process.env.JWT_SECRET;
