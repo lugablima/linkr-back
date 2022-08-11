@@ -2,23 +2,12 @@ import postsRepository from "../repositories/postsRepository.js";
 
 export async function getPosts(req, res) {
   try {
-    const { rowCount: users } = await postsRepository.getUserByEmail(email);
+    const { rows: posts } = await postsRepository.getAllPosts();
 
-    if (users) {
-      return res.status(409).send("Email already registered");
-    }
-
-    const { rowCount: user } = await postsRepository.getUserByUsername(username);
-
-    if (user) {
-      return res.status(409).send("Username already registered");
-    }
-
-    await postsRepository.createUser(email, password, username, pictureURL);
-    res.sendStatus(201);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send("Server crashed while trying to create user", error);
+    res.status(200).send(posts);
+  } catch (err) {
+    console.log("Error getting posts: ", err.message);
+    return res.sendStatus(500);
   }
 }
 

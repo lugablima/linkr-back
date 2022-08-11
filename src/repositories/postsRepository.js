@@ -1,7 +1,13 @@
 import db from "../db/postgres.js";
 
 async function getAllPosts() {
-  return db.query(`SELECT * FROM users WHERE email = $1`);
+  return db.query(
+    `SELECT p.id, p.link, p.description 
+    FROM posts p 
+    JOIN users u ON u.id = p."userId"
+    ORDER BY p."createdAt" DESC
+    LIMIT 20`
+  );
 }
 
 async function insertPost(userId, link, description) {
