@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 import db from "../db/postgres.js";
 
@@ -6,8 +6,12 @@ async function getUserByEmail(email) {
   return db.query(`SELECT * FROM users WHERE email = $1`, [email]);
 }
 
+async function getUserById(userId) {
+  return db.query(`SELECT * FROM users WHERE id = $1`, [userId]);
+}
+
 async function getUserByUsername(username) {
-  return db.query(`SELECT * FROM users WHERE username = $1`, [username]);
+  return db.query(`SELECT * FROM users WHERE username ILIKE $1`, [username]);
 }
 
 async function createUser(email, password, username, pictureURL) {
@@ -21,6 +25,6 @@ async function createUser(email, password, username, pictureURL) {
   );
 }
 
-const authRepository = { getUserByEmail, createUser, getUserByUsername };
+const authRepository = { getUserByEmail, getUserById, createUser, getUserByUsername };
 
 export default authRepository;

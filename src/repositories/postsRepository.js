@@ -2,7 +2,7 @@ import db from "../db/postgres.js";
 
 async function getAllPosts() {
   return db.query(
-    `SELECT p.id, p.link, p.description 
+    `SELECT p.id, u.username AS user, u."pictureURL" AS "userPhoto", p.link, p.description, p."createdAt" 
     FROM posts p 
     JOIN users u ON u.id = p."userId"
     ORDER BY p."createdAt" DESC

@@ -6,13 +6,13 @@ export async function getPosts(req, res) {
 
     res.status(200).send(posts);
   } catch (err) {
-    console.log("Error getting posts: ", err.message);
+    console.log("Error getting posts:", err.message);
     return res.sendStatus(500);
   }
 }
 
 export async function createPost(req, res) {
-  const { id: userId } = res.locals.user;
+  const { userId } = res.locals;
   const { link } = req.body;
   let { description } = req.body;
 
@@ -31,7 +31,7 @@ export async function createPost(req, res) {
 
     res.sendStatus(201);
   } catch (err) {
-    console.log("Error creating post: ", err.message);
+    console.log("Error creating post:", err.message);
     res.sendStatus(500);
   }
 }
