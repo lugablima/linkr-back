@@ -12,7 +12,11 @@ export async function getLikes(req, res) {
 
     if (!post) return res.sendStatus(404);
 
-    const { rows: likes } = await likesRepository.getLikesByPostId(userId, postId);
+    const {
+      rows: [likes],
+    } = await likesRepository.getLikesByPostId(userId, postId);
+
+    if (!likes) return res.status(200).send({});
 
     res.status(200).send(likes);
   } catch (err) {
