@@ -1,19 +1,20 @@
 import db from "../db/postgres.js";
 
-function getLikesByPostId(postId) {
+function getLikesByPostId(userId, postId) {
   return db.query(
-    `SELECT l."postId" AS id, json_agg(u.username) AS users, 
-        CASE 
-            WHEN COUNT(l."postId") > 2 THEN 
-                COUNT(l."postId")::INTEGER - 2 
-            ELSE 
-                '0'::INTEGER 
-        END AS "likeCountLeft"  
+    `SELECT l."postId" AS id, json_agg(u.username) AS users,                  
+    COUNT(l."postId")::INTEGER AS "likesCount", 
+      CASE 
+        WHEN EXISTS(SELECT * FROM "likedPosts" l WHERE l."userId" = $1 AND l."postId" = $2) THEN
+          'true'::BOOLEAN
+        ELSE
+          'false'::BOOLEAN
+      END AS "likedByUser"
     FROM "likedPosts" l
     JOIN users u ON u.id = l."userId" 
-    WHERE "postId" = $1
+    WHERE "postId" = $2
     GROUP BY l."postId"`,
-    [postId]
+    [userId, postId]
   );
 }
 

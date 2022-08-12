@@ -2,6 +2,7 @@ import likesRepository from "../repositories/likesRepository.js";
 import postsRepository from "../repositories/postsRepository.js";
 
 export async function getLikes(req, res) {
+  const { userId } = res.locals;
   const postId = parseInt(req.params.postId);
 
   if (!postId) return res.sendStatus(404);
@@ -11,7 +12,7 @@ export async function getLikes(req, res) {
 
     if (!post) return res.sendStatus(404);
 
-    const { rows: likes } = await likesRepository.getLikesByPostId(postId);
+    const { rows: likes } = await likesRepository.getLikesByPostId(userId, postId);
 
     res.status(200).send(likes);
   } catch (err) {
