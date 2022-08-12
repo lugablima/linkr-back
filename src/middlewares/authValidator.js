@@ -1,26 +1,25 @@
-import usersRepository from "../repositories/authRepository.js";
-import sessionsRepository from "../repositories/sessionsRepository.js";
+import "../setup.js";
+import jwt from "jsonwebtoken";
+import authRepository from "../repositories/authRepository.js";
 
-export async function validateToken(req, res, next) {
+async function validateToken(req, res, next) {
   const { authorization } = req.headers;
-  const token = authorization?.replace("Bearer", "");
+  const token = authorization?.replace("Bearer ", "");
 
   if (!token) return res.status(401).send("You must send a token before");
 
   try {
-    const { rows: sessions } = await sessionsRepository.getSessionByToken(token);
-    const [session] = sessions;
+    const data = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (!session) return res.status(401).send("You have no session");
+    const { rowCount: user } = await authRepository.getUserById(data.userId);
 
-    const { rows: users } = await usersRepository.getUserById(session.userId);
-    const [user] = users;
-    if (!user) return res.status(401).send("User not found");
-    res.locals.user = user;
+    if (!user) return res.status(401).send("!user");
+
+    res.locals.userId = data.userId;
+
     next();
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
+  } catch (err) {
+    res.sendStatus(401);
   }
 }
 
