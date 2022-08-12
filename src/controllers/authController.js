@@ -47,7 +47,7 @@ export async function login(req, res) {
       const secretKey = process.env.JWT_SECRET;
       const token = jwt.sign(data, secretKey, { expiresIn: TIME_15_DAYS });
 
-      res.status(200).send(token);
+      res.status(200).send({ name: user.username, photo: user.pictureURL, token });
     } else res.sendStatus(401);
   } catch (err) {
     console.log("Error logging in user:", err.message);
