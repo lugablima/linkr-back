@@ -12,11 +12,16 @@ async function getAllPosts() {
   );
 }
 
+function getPostById(postId) {
+  return db.query(`SELECT * FROM posts WHERE id = $1`, [postId]);
+}
+
 async function insertPost(userId, link, description) {
   return db.query(`INSERT INTO posts ("userId", link, description) VALUES ($1, $2, $3)`, [userId, link, description]);
 }
 
 export default {
   getAllPosts,
+  getPostById,
   insertPost,
 };

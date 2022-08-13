@@ -13,7 +13,7 @@ async function validateToken(req, res, next) {
 
     const { rowCount: user } = await authRepository.getUserById(data.userId);
 
-    if (!user) return res.status(401).send("!user");
+    if (!user) return res.sendStatus(401);
 
     res.locals.userId = data.userId;
 
