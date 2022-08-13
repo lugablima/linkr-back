@@ -39,7 +39,7 @@ export async function createPost(req, res) {
 
   if (!description) description = null;
 
-  const hashtags = description.split("").filter((text) => text.startsWith("#"));
+  res.locals.postDescription = description;
 
   try {
     await postsRepository.insertPost(userId, link, description);
