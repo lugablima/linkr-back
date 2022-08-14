@@ -2,7 +2,7 @@ import db from "../db/postgres.js";
 
 async function getAllPosts() {
   return db.query(
-    `SELECT p.id, json_build_object('name', u.username, 'photo', u."pictureURL") AS user, 
+    `SELECT p.id, json_build_object('id', u.id, 'name', u.username, 'photo', u."pictureURL") AS user, 
     json_build_object('url', p.link, 'legend', p.description, 'title', NULL, 'description', NULL, 'image', NULL) AS link, 
     p."createdAt" 
     FROM posts p 
