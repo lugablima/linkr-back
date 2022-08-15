@@ -5,6 +5,6 @@ import getUsers from "../controllers/usersController.js";
 
 const usersRouter = Router();
 
-usersRouter.get("/users", validateToken, getUsers);
+usersRouter.get("/users/:username", validateToken, getUsers);
 
 export default usersRouter;
