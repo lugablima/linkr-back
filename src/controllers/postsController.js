@@ -29,7 +29,6 @@ export async function getPosts(req, res) {
 
 export async function createPost(req, res) {
   const { userId } = res.locals;
-  const { postId } = res.locals.id;
   const { link } = req.body;
   let { description } = req.body;
 
@@ -47,33 +46,35 @@ export async function createPost(req, res) {
 
   if (description) {
     const regexp = /#\S+/g;
-    hashtags = description.match(regexp);
+    hashtags = description.match(regexp)?.map((hashtag) => hashtag.replace("#", "").toLowerCase());
   }
-  if (hashtags) {
-    hashtags = hashtags.map((hashtag) => {
-      const hashtagName = hashtag.substring(1);
-      return hashtagName.toLowerCase();
-    });
-  } else {
-    hashtags = [];
-  }
+
+  if (!hashtags) hashtags = [];
 
   try {
+    const {
+      rows: [insertedPost],
+    } = await postsRepository.insertPost(userId, link, description);
+
     await Promise.all(
       hashtags.map(async (hashtag) => {
-        const hashtagExist = (await hashtagsRepository.getHashtagByName(hashtag)).rows[0];
+        const {
+          rows: [hashtagExist],
+        } = await hashtagsRepository.getHashtagByName(hashtag);
 
         if (hashtagExist) {
-          const hashtagId = await hashtagsRepository.getHashtagIdByName(hashtagExist);
-          await hashtagsRepository.setUseCount(hashtagId).rows[0];
+          await hashtagsRepository.setUseCount(hashtagExist.id);
+          await hashtagsRepository.insertHashtagPostRelation(insertedPost.id, hashtagExist.id);
         } else {
-          const newHashtag = (await hashtagsRepository.insertHashtag(hashtag)).rows[0];
-          await hashtagsRepository.insertHashtagPostRelation(postId, newHashtag.id);
+          const {
+            rows: [insertedHashtag],
+          } = await hashtagsRepository.insertHashtag(hashtag);
+          await hashtagsRepository.insertHashtagPostRelation(insertedPost.id, insertedHashtag.id);
         }
+
+        return "Ok";
       })
     );
-
-    await postsRepository.insertPost(userId, link, description);
 
     res.sendStatus(201);
   } catch (err) {
