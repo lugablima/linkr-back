@@ -32,12 +32,27 @@ async function getHashtagPostByName(hashtag) {
   );
 }
 
+async function deleteHashtagPostRelation(postId, hashtagId) {
+  return db.query(`DELETE FROM "hashtagsPosts" WHERE "postId" = $1 AND "hashtagId" = $2`, [postId, hashtagId]);
+}
+
+async function decrementUseCount(hashtagId) {
+  return db.query(`UPDATE hashtags SET "useCount" = "useCount" - 1 WHERE id = $1 RETURNING "useCount"`, [hashtagId]);
+}
+
+async function deleteHashtag(hashtagId) {
+  return db.query(`DELETE FROM hashtags WHERE id = $1`, [hashtagId]);
+}
+
 const hashtagsRepository = {
   getHashtagByName,
   insertHashtag,
   setUseCount,
   insertHashtagPostRelation,
   getHashtagPostByName,
+  deleteHashtagPostRelation,
+  decrementUseCount,
+  deleteHashtag,
 };
 
 export default hashtagsRepository;
