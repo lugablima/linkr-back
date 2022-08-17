@@ -37,3 +37,9 @@ CREATE TABLE "likedPosts" (
 	"postId" INTEGER NOT NULL REFERENCES posts(id),
 	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE follows(
+    id SERIAL NOT NULL PRIMARY KEY,
+    follower INTEGER NOT NULL REFERENCES "users"("id");
+    following INTEGER NOT NULL REFERENCES "users"("id");
+);
