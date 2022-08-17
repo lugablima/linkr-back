@@ -95,8 +95,6 @@ export async function createPost(req, res) {
           } = await hashtagsRepository.insertHashtag(hashtag);
           await hashtagsRepository.insertHashtagPostRelation(insertedPost.id, insertedHashtag.id);
         }
-
-        return "Ok";
       })
     );
 
@@ -143,6 +141,8 @@ export async function deletePost(req, res) {
         })
       );
     }
+
+    await postsRepository.deleteLikedPost(postId);
 
     await postsRepository.deletePostById(postId);
 
