@@ -38,6 +38,10 @@ async function deletePostById(postId) {
   return db.query(`DELETE FROM posts WHERE id = $1`, [postId]);
 }
 
+async function deleteLikedPost(postId) {
+  return db.query(`DELETE FROM "likedPosts" WHERE "postId" = $1`, [postId]);
+}
+
 async function updatePost(postId, userId, link, description) {
   return db.query(`UPDATE posts SET link = $1, description = $2 WHERE id = $3 AND "userId" = $4 RETURNING *`, [
     link,
@@ -53,5 +57,6 @@ export default {
   getPostById,
   insertPost,
   deletePostById,
+  deleteLikedPost,
   updatePost,
 };
