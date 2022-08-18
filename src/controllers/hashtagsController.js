@@ -8,11 +8,13 @@ export default async function getHashtags(req, res) {
   if (!offset && offset !== 0) return res.sendStatus(422);
 
   try {
-    const { rows: hashtags } = await hashtagsRepository.getHashtagPostByName(hashtag, offset);
+    const { rowCount: hashtagExist } = await hashtagsRepository.getHashtagByName(hashtag);
 
-    if (hashtags.length === 0) {
+    if (!hashtagExist) {
       return res.status(404).send("No posts found with this hashtag");
     }
+
+    const { rows: hashtags } = await hashtagsRepository.getHashtagPostByName(hashtag, offset);
 
     const newHashtags = await Promise.all(
       hashtags.map(async (el) => {
