@@ -1,6 +1,6 @@
 import db from "../db/postgres.js";
 
-async function getAllPosts() {
+async function getAllPosts(offset) {
   return db.query(
     `SELECT p.id, json_build_object('id', u.id, 'name', u.username, 'photo', u."pictureURL") AS user, 
     json_build_object('url', p.link, 'legend', p.description, 'title', NULL, 'description', NULL, 'image', NULL) AS link, 
@@ -8,11 +8,13 @@ async function getAllPosts() {
     FROM posts p 
     JOIN users u ON u.id = p."userId"
     ORDER BY p."createdAt" DESC
-    LIMIT 20`
+    OFFSET $1 
+    LIMIT 10`,
+    [offset]
   );
 }
 
-async function getAllUserPosts(userId) {
+async function getAllUserPosts(userId, offset) {
   return db.query(
     `SELECT p.id, json_build_object('id', u.id, 'name', u.username, 'photo', u."pictureURL") AS user, 
     json_build_object('url', p.link, 'legend', p.description, 'title', NULL, 'description', NULL, 'image', NULL) AS link, 
@@ -21,8 +23,9 @@ async function getAllUserPosts(userId) {
     JOIN users u ON u.id = p."userId"
     WHERE u.id = $1
     ORDER BY p."createdAt" DESC
-    LIMIT 20`,
-    [userId]
+    OFFSET $2
+    LIMIT 10`,
+    [userId, offset]
   );
 }
 
