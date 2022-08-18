@@ -9,7 +9,7 @@ async function getAllPosts(offset) {
     JOIN users u ON u.id = p."userId"
     ORDER BY p."createdAt" DESC
     OFFSET $1 
-    LIMIT 20`,
+    LIMIT 10`,
     [offset]
   );
 }
@@ -24,7 +24,7 @@ async function getAllUserPosts(userId, offset) {
     WHERE u.id = $1
     ORDER BY p."createdAt" DESC
     OFFSET $2
-    LIMIT 20`,
+    LIMIT 10`,
     [userId, offset]
   );
 }
