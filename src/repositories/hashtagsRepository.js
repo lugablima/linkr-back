@@ -28,7 +28,7 @@ async function getHashtagPostByName(hashtag, offset) {
   WHERE h.name ILIKE $1
   ORDER BY p."createdAt" DESC
   OFFSET $2
-  LIMIT 20`,
+  LIMIT 10`,
     [hashtag, offset]
   );
 }
