@@ -19,7 +19,6 @@ export async function follow(req, res) {
 
 export async function unfollow(req, res) {
   const id = parseInt(req.params.id);
-  console.log(id);
   const { userId } = res.locals;
 
   try {
@@ -33,5 +32,23 @@ export async function unfollow(req, res) {
   } catch (err) {
     console.log(err);
     return res.status(500).send("Error while trying to unfollow", err);
+  }
+}
+
+export async function checkFollowing(req, res) {
+  const id = parseInt(req.params.id);
+  const { userId } = res.locals;
+
+  try {
+    const { rowCount: isFollowing } = await followsRepository.checkFollowing(userId, id);
+    if (isFollowing) {
+      const follows = true;
+      return res.status(200).send(follows);
+    }
+    const follows = false;
+    return res.status(200).send(follows);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send("Error while trying to check following", err);
   }
 }
