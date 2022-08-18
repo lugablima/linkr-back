@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default */
 import usersRepository from "../repositories/usersRepository.js";
 
 async function getUsers(req, res) {

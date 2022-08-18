@@ -38,8 +38,24 @@ CREATE TABLE "likedPosts" (
 	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE follows(
-    id SERIAL NOT NULL PRIMARY KEY,
-    follower INTEGER NOT NULL REFERENCES users(id);
-    following INTEGER NOT NULL REFERENCES users(id);
+CREATE TABLE followers (
+	id SERIAL NOT NULL PRIMARY KEY,
+	"followerId" INTEGER REFERENCES users(id),
+	"followingId" INTEGER REFERENCES users(id),
+	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE comments (
+	id SERIAL NOT NULL PRIMARY KEY,
+	"postId" INTEGER NOT NULL REFERENCES posts(id),
+	"userId" INTEGER NOT NULL REFERENCES users(id),
+	comment TEXT NOT NULL
+	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE reposts (
+	id SERIAL NOT NULL PRIMARY KEY,
+	"postId" INTEGER NOT NULL REFERENCES posts(id),
+	"userId" INTEGER NOT NULL REFERENCES users(id),
+	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );
