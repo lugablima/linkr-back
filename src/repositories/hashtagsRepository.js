@@ -16,7 +16,7 @@ async function insertHashtagPostRelation(postId, hashtagId) {
   return db.query(`INSERT INTO "hashtagsPosts" ("postId", "hashtagId") VALUES ($1, $2)`, [postId, hashtagId]);
 }
 
-async function getHashtagPostByName(hashtag) {
+async function getHashtagPostByName(hashtag, offset) {
   return db.query(
     `SELECT p.id, json_build_object('id', u.id, 'name', u.username, 'photo', u."pictureURL") AS user, 
   json_build_object('url', p.link, 'legend', p.description, 'title', NULL, 'description', NULL, 'image', NULL) AS link, 
@@ -27,8 +27,9 @@ async function getHashtagPostByName(hashtag) {
   JOIN hashtags h ON h.id = r."hashtagId"
   WHERE h.name ILIKE $1
   ORDER BY p."createdAt" DESC
+  OFFSET $2
   LIMIT 20`,
-    [hashtag]
+    [hashtag, offset]
   );
 }
 

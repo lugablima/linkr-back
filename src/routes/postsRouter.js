@@ -9,8 +9,8 @@ import postSchema from "../schemas/postsSchema.js";
 const postsRouter = Router();
 
 postsRouter.delete("/posts/:postId", validateToken, deletePost);
-postsRouter.get("/posts", validateToken, getPosts);
-postsRouter.get("/posts/:userId", validateToken, getUserPosts);
+postsRouter.get("/posts/:offset", validateToken, getPosts);
+postsRouter.get("/posts/:userId/:offset", validateToken, getUserPosts);
 postsRouter.post("/posts", validateToken, validateSchema(postSchema), createPost);
 postsRouter.put("/posts/:postId", validateToken, validateSchema(postSchema), updatePost);
 

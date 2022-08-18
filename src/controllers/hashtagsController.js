@@ -3,8 +3,12 @@ import hashtagsRepository from "../repositories/hashtagsRepository.js";
 
 export default async function getHashtags(req, res) {
   const { hashtag } = req.params;
+  const offset = parseInt(req.params.offset);
+
+  if (!offset && offset !== 0) return res.sendStatus(422);
+
   try {
-    const { rows: hashtags } = await hashtagsRepository.getHashtagPostByName(hashtag);
+    const { rows: hashtags } = await hashtagsRepository.getHashtagPostByName(hashtag, offset);
 
     if (hashtags.length === 0) {
       return res.status(404).send("No posts found with this hashtag");
