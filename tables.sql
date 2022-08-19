@@ -40,8 +40,8 @@ CREATE TABLE "likedPosts" (
 
 CREATE TABLE followers (
 	id SERIAL NOT NULL PRIMARY KEY,
-	"followerId" INTEGER REFERENCES users(id),
-	"followingId" INTEGER REFERENCES users(id),
+	"followerId" INTEGER NOT NULL REFERENCES users(id),
+	"followingId" INTEGER NOT NULL REFERENCES users(id),
 	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 

@@ -5,7 +5,11 @@ import getHashtagsFromDescription from "../utils/getHashtagsFromDescription.js";
 
 export async function getPosts(req, res) {
   try {
-    const { rows: posts } = await postsRepository.getAllPosts();
+    const offset = parseInt(req.params.offset);
+
+    if (!offset && offset !== 0) return res.sendStatus(422);
+
+    const { rows: posts } = await postsRepository.getAllPosts(offset);
 
     const newPosts = await Promise.all(
       posts.map(async (post) => {
@@ -30,11 +34,15 @@ export async function getPosts(req, res) {
 
 export async function getUserPosts(req, res) {
   try {
+    const offset = parseInt(req.params.offset);
+
+    if (!offset && offset !== 0) return res.sendStatus(422);
+
     const userId = parseInt(req.params.userId);
 
     if (!userId) return res.sendStatus(404);
 
-    const { rows: posts } = await postsRepository.getAllUserPosts(userId);
+    const { rows: posts } = await postsRepository.getAllUserPosts(userId, offset);
 
     const newPosts = await Promise.all(
       posts.map(async (post) => {
@@ -95,8 +103,6 @@ export async function createPost(req, res) {
           } = await hashtagsRepository.insertHashtag(hashtag);
           await hashtagsRepository.insertHashtagPostRelation(insertedPost.id, insertedHashtag.id);
         }
-
-        return "Ok";
       })
     );
 
@@ -143,6 +149,8 @@ export async function deletePost(req, res) {
         })
       );
     }
+
+    await postsRepository.deleteLikedPost(postId);
 
     await postsRepository.deletePostById(postId);
 
