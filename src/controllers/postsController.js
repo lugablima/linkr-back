@@ -3,6 +3,31 @@ import hashtagsRepository from "../repositories/hashtagsRepository.js";
 import postsRepository from "../repositories/postsRepository.js";
 import getHashtagsFromDescription from "../utils/getHashtagsFromDescription.js";
 
+export async function getNewsPosts(req, res) {
+  try {
+    const { rows: posts } = await postsRepository.getAllNewsPosts();
+
+    const newPosts = await Promise.all(
+      posts.map(async (post) => {
+        const { title, image, description } = await urlMetadata(post.link.url);
+
+        const newPost = { ...post };
+
+        newPost.link.title = title;
+        newPost.link.image = image;
+        newPost.link.description = description;
+
+        return newPost;
+      })
+    );
+
+    res.status(200).send(newPosts);
+  } catch (err) {
+    console.log("Error getting news posts:", err.message);
+    return res.sendStatus(500);
+  }
+}
+
 export async function getPosts(req, res) {
   try {
     const offset = parseInt(req.params.offset);
