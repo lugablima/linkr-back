@@ -23,7 +23,6 @@ export async function unfollow(req, res) {
 
   try {
     const { rowCount: isFollowing } = await followsRepository.checkFollowing(userId, id);
-    console.log(isFollowing);
     if (!isFollowing) {
       return res.status(409).send("You're not following this user");
     }
@@ -41,12 +40,10 @@ export async function checkFollowing(req, res) {
 
   try {
     const { rowCount: isFollowing } = await followsRepository.checkFollowing(userId, id);
-    if (isFollowing) {
-      const follows = true;
-      return res.status(200).send(follows);
+    if (!isFollowing) {
+      return res.status(200).send(false);
     }
-    const follows = false;
-    return res.status(200).send(follows);
+    return res.status(200).send(true);
   } catch (err) {
     console.log(err);
     return res.status(500).send("Error while trying to check following", err);
