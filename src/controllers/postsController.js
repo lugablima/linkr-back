@@ -4,8 +4,9 @@ import postsRepository from "../repositories/postsRepository.js";
 import getHashtagsFromDescription from "../utils/getHashtagsFromDescription.js";
 
 export async function getNewsPosts(req, res) {
+  const { userId } = res.locals;
   try {
-    const { rows: posts } = await postsRepository.getAllNewsPosts();
+    const { rows: posts } = await postsRepository.getAllNewsPosts(userId);
 
     const newPosts = await Promise.all(
       posts.map(async (post) => {
@@ -29,12 +30,13 @@ export async function getNewsPosts(req, res) {
 }
 
 export async function getPosts(req, res) {
+  const { userId } = res.locals;
   try {
     const offset = parseInt(req.params.offset);
 
     if (!offset && offset !== 0) return res.sendStatus(422);
 
-    const { rows: posts } = await postsRepository.getAllPosts(offset);
+    const { rows: posts } = await postsRepository.getAllPosts(userId, offset);
 
     const newPosts = await Promise.all(
       posts.map(async (post) => {

@@ -13,7 +13,7 @@ async function checkFollowing(userId, id) {
 }
 
 async function getFollowById(userId) {
-  return db.query(`SELECT * FROM followers WHERE "followedId" = $1`, [userId]);
+  return db.query(`SELECT * FROM followers WHERE "followerId" = $1`, [userId]);
 }
 
 const followsRepository = { follow, unfollow, checkFollowing, getFollowById };

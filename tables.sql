@@ -49,7 +49,7 @@ CREATE TABLE comments (
 	id SERIAL NOT NULL PRIMARY KEY,
 	"postId" INTEGER NOT NULL REFERENCES posts(id),
 	"userId" INTEGER NOT NULL REFERENCES users(id),
-	comment TEXT NOT NULL
+	comment TEXT NOT NULL,
 	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
