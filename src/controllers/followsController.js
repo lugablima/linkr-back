@@ -49,3 +49,18 @@ export async function checkFollowing(req, res) {
     return res.status(500).send("Error while trying to check following", err);
   }
 }
+
+export async function checkUserFollowsSomeone(req, res) {
+  const { userId } = res.locals;
+
+  try {
+    const { rowCount: follows } = await followsRepository.getFollowById(userId);
+    if (!follows) {
+      return res.status(200).send(false);
+    }
+    return res.status(200).send(true);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send("Error while trying to check if user follows someone", err);
+  }
+}
