@@ -1,5 +1,17 @@
 import db from "../db/postgres.js";
 
+async function getAllNewsPosts() {
+  return db.query(
+    `SELECT p.id, json_build_object('id', u.id, 'name', u.username, 'photo', u."pictureURL") AS user, 
+    json_build_object('url', p.link, 'legend', p.description, 'title', NULL, 'description', NULL, 'image', NULL) AS link, 
+    p."createdAt" 
+    FROM posts p 
+    JOIN users u ON u.id = p."userId"
+    WHERE now() > p."createdAt" AND now() - interval '20 seconds' < p."createdAt"  
+    ORDER BY p."createdAt" DESC`
+  );
+}
+
 async function getAllPosts(offset) {
   return db.query(
     `SELECT p.id, json_build_object('id', u.id, 'name', u.username, 'photo', u."pictureURL") AS user, 
@@ -55,6 +67,7 @@ async function updatePost(postId, userId, link, description) {
 }
 
 export default {
+  getAllNewsPosts,
   getAllPosts,
   getAllUserPosts,
   getPostById,
