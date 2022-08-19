@@ -9,7 +9,8 @@ async function getAllNewsPosts(userId) {
     JOIN users u ON u.id = p."userId"
     LEFT JOIN followers f ON f."followingId" = u.id AND f."followerId" = $1 
     WHERE now() > p."createdAt" AND now() - interval '20 seconds' < p."createdAt"  
-    ORDER BY p."createdAt" DESC`
+    ORDER BY p."createdAt" DESC`,
+    [userId]
   );
 }
 
