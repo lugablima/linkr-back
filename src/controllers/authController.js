@@ -27,7 +27,7 @@ export async function createUser(req, res) {
     res.sendStatus(201);
   } catch (error) {
     console.log(error);
-    return res.status(500).send("Server crashed while trying to create user", error);
+    return res.status(500).send("Server crashed while trying to create user");
   }
 }
 
